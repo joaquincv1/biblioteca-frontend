@@ -69,6 +69,8 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  // ¡Ya no necesitamos los métodos getToken() o saveToken() aquí!
-  // ¡Y tampoco necesitamos isLoggedIn()! Los signals lo manejan todo.
+  getProfile(): Observable<any> {
+  return this.http.get(`${this.apiUrl}/profile`); 
+  }
 }
+

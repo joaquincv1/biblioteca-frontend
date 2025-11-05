@@ -1,23 +1,36 @@
-/* Esto es fundamental para que los items se separen en la barra de herramientas */
 .spacer {
-  flex: 1 1 auto; 
+  flex: 1 1 auto; /* Esto empuja el botón de logout a la derecha */
 }
 
-/* El contenedor de la página para darle un margen de 20px */
 .dashboard-container {
-    padding: 20px;
+    padding: 200px; /* Margen interior para el contenido de la página */
+    /* El ancho del 100% se aplica automáticamente */
 }
 
-/* Reglas de estilización de la tarjeta de libros */
-mat-card {
+/* Estilos de Material para que los campos de formulario ocupen el 100% */
+mat-form-field {
+    width: 100%;
+}
+
+/* Margen superior para las tarjetas y separadores */
+.mt-4 {
     margin-top: 20px;
-    max-width: 800px; 
-    /* Si queremos que el contenido esté a la izquierda (como un documento) */
-    margin-left: 0; 
 }
 
-/* Arreglo visual del botón de Logout */
-/* Cambiamos mat-icon-button a mat-button para mejor visibilidad */
-.mat-toolbar button {
-    color: black; /* Asegura que el texto sea visible */
+/* Estiliza los botones de acción en línea */
+button[mat-raised-button], button[mat-button] {
+    margin-right: 10px;
+}
+
+/* La tarjeta del dashboard no debe ser demasiado ancha */
+mat-card {
+    max-width: 800px;
+}
+
+/* Estilizado del formulario de edición para distinguirlo */
+.edit-form-container {
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 20px;
 }
