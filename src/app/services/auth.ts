@@ -1,50 +1,74 @@
-import { Injectable, signal } from '@angular/core'; // <-- 1. Importa 'signal'
+import { Injectable, signal, computed } from '@angular/core'; // 1. Importa 'computed'
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Router } from '@angular/router'; // <-- Importa el Router para el logout
+import { Router } from '@angular/router';
+import { StorageService } from './storage'; // 2. Importa StorageService
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
-  private readonly TOKEN_KEY = 'auth_token';
 
-  // 2. ¡EL CAMBIO CLAVE!
-  // Creamos un signal. Lo inicializamos leyendo de localStorage
-  // para que el estado persista si refrescas la página.
-  public isLoggedIn = signal<boolean>(!!this.getToken());
+  // --- SIGNALS PARA EL ESTADO ---
+  
+  // 1. CAMBIO AQUÍ: Inicializa el signal como 'null' por ahora.
+  public currentUser = signal<any | null>(null); 
+  
+  // (Estas líneas están perfectas, se basan en currentUser)
+  public isLoggedIn = computed(() => !!this.currentUser());
+  public userRole = computed(() => this.currentUser()?.role); 
+  // ------------------------------
 
-  constructor(private http: HttpClient, private router: Router) { } // Inyecta el Router
+  constructor(
+    private http: HttpClient, 
+    private router: Router,
+    private storageService: StorageService 
+  ) { 
+    // 2. ¡AQUÍ ESTÁ LA SOLUCIÓN!
+    // Ahora que storageService SÍ existe, leemos el valor 
+    // y actualizamos el signal.
+    this.currentUser.set(this.storageService.getUser());
+  }
 
   login(credentials: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
       tap((response: any) => {
-        this.saveToken(response.token);
-        // 3. Actualizamos el signal a 'true'
-        this.isLoggedIn.set(true); 
+        // 7. Usamos StorageService para guardar TODO
+        this.storageService.saveToken(response.token);
+        this.storageService.saveUser(response); // Guarda el objeto { _id, name, email, role, token }
+
+        // 8. Actualizamos el signal del usuario. ¡Los otros signals (isLoggedIn, userRole) se actualizarán solos!
+        this.currentUser.set(response);
       })
     );
   }
 
-  // --- Métodos de Gestión del Token ---
-  saveToken(token: string): void {
-    localStorage.setItem(this.TOKEN_KEY, token);
-  }
+  register(userData: any): Observable<any> {
+    // Llama al endpoint de registro que ya creamos en el backend
+    return this.http.post(`${this.apiUrl}/register`, userData).pipe(
+      tap((response: any) => {
+        // ¡Auto-Login! Si el registro es exitoso,
+        // guardamos el token y los datos del nuevo usuario.
+        this.storageService.saveToken(response.token);
+        this.storageService.saveUser(response);
 
-  getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+        // Actualizamos el signal. ¡La app ahora sabe que está logueado!
+        this.currentUser.set(response);
+      })
+    );
   }
 
   logout(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    // 4. Actualizamos el signal a 'false'
-    this.isLoggedIn.set(false);
-    // Y redirigimos al login
+    // 9. Usamos StorageService para limpiar todo
+    this.storageService.clean();
+    
+    // 10. Actualizamos el signal.
+    this.currentUser.set(null);
     this.router.navigate(['/login']);
   }
 
-  // 5. ¡YA NO NECESITAMOS EL MÉTODO isLoggedIn()!
-  // Lo borramos, porque ahora los guardianes leerán el signal directamente.
+  // ¡Ya no necesitamos los métodos getToken() o saveToken() aquí!
+  // ¡Y tampoco necesitamos isLoggedIn()! Los signals lo manejan todo.
 }

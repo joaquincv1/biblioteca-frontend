@@ -1,39 +1,83 @@
-import { Component, OnInit } from '@angular/core'; // 1. Importa OnInit
-import { CommonModule } from '@angular/common'; // 2. Importa CommonModule
-import { BookService } from '../../services/book'; // 3. Importa tu nuevo servicio
+import { Component, OnInit } from '@angular/core';
+// 1. Importa CommonModule Y ReactiveFormsModule
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
+
+import { BookService } from '../../services/book';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule], // 4. Añade CommonModule (para usar *ngFor)
+  // 2. Añade ReactiveFormsModule a los imports
+  imports: [CommonModule, ReactiveFormsModule], 
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
-export class DashboardComponent implements OnInit { // 5. Implementa OnInit
+export class DashboardComponent implements OnInit { 
 
-  books: any[] = []; // 6. Una variable para guardar la lista de libros
-  loading: boolean = true; // (Opcional) para mostrar un mensaje de carga
+  books: any[] = [];
+  loading: boolean = true;
 
-  // 7. Inyecta el BookService en el constructor
-  constructor(private bookService: BookService) { }
+  // 3. Nuevas variables para el formulario
+  showCreateForm: boolean = false; // Para mostrar/ocultar el formulario
+  bookForm: FormGroup; // Para el formulario reactivo
+  createError: string | null = null; // Para mostrar errores
 
-  // 8. ngOnInit se ejecuta automáticamente cuando el componente se carga
+  constructor(
+    private bookService: BookService, 
+    public authService: AuthService,
+    private fb: FormBuilder // 4. Inyecta el FormBuilder
+  ) {
+    // 5. Define el formulario de creación de libros
+    this.bookForm = this.fb.group({
+      title: ['', [Validators.required]],
+      author: ['', [Validators.required]],
+      isbn: ['', [Validators.required]]
+    });
+  }
+
   ngOnInit(): void {
     this.loadBooks();
   }
 
-  // 9. Llama al servicio para obtener los libros
-  loadBooks(): void {
-    this.bookService.getBooks().subscribe(
-      (data) => {
-        this.books = data; // Guarda los libros en la variable
-        this.loading = false;
-        console.log('¡Libros cargados exitosamente!', this.books);
+loadBooks(): void {
+  this.loading = true; // <-- Se pone en 'true' (¡esto está bien!)
+
+  this.bookService.getBooks().subscribe(
+    (data) => {
+      this.books = data; // Guarda los libros
+      this.loading = false; // <-- ¡Se pone en 'false' al terminar!
+      console.log('¡Libros cargados exitosamente!', this.books);
+    },
+    (error) => {
+      console.error('Error al cargar los libros:', error);
+      this.loading = false; // <-- ¡También se pone en 'false' si hay error!
+    }
+  );
+}
+
+  // 6. NUEVO MÉTODO: Se llama cuando se envía el formulario de libro
+  onSubmitCreateBook(): void {
+    if (this.bookForm.invalid) {
+      return; // No hacer nada si el formulario es inválido
+    }
+
+    this.createError = null; // Limpia errores antiguos
+
+    this.bookService.createBook(this.bookForm.value).subscribe(
+      (newBook) => {
+        console.log('¡Libro creado!', newBook);
+        this.showCreateForm = false; // Oculta el formulario
+        this.bookForm.reset(); // Limpia el formulario
+
+        // ¡MUY IMPORTANTE!
+        // Vuelve a cargar la lista de libros para que el nuevo aparezca
+        this.loadBooks(); 
       },
       (error) => {
-        console.error('Error al cargar los libros:', error);
-        // Si ves un error 401 aquí, ¡significa que tu Interceptor falló!
-        this.loading = false;
+        console.error('Error al crear el libro:', error);
+        this.createError = error.error?.message || 'Error desconocido al crear el libro.';
       }
     );
   }

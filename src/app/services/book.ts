@@ -19,6 +19,11 @@ export class BookService {
     // Esta es la magia de los interceptors.
     return this.http.get(this.apiUrl);
   }
-
+  // Método para CREAR un nuevo libro
+createBook(bookData: any): Observable<any> {
+  // No necesitamos headers, ¡el JwtInterceptor lo hace por nosotros!
+  // Esto llamará a POST /api/books
+  return this.http.post(this.apiUrl, bookData);
+}
   // (Aquí pondremos getBookById(), createBook(), etc. más adelante)
 }
