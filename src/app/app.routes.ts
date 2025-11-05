@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login';
-import { Dashboard } from './components/dashboard/dashboard';
+import { DashboardComponent } from './components/dashboard/dashboard';
 import { authGuard } from './guards/auth-guard'; // <-- 1. Importa el guardia
 import { loginGuard } from './guards/login-guard'; // <-- 1. Importa el nuevo guardia
 
@@ -13,7 +13,7 @@ export const routes: Routes = [
   
   { 
     path: 'dashboard', 
-    component: Dashboard,
+    component: DashboardComponent,
     canActivate: [authGuard] 
   },
   

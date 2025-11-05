@@ -1,2 +1,19 @@
 <h1>¡Bienvenido a la Biblioteca!</h1>
-<p>Estás logueado.</p>
+<p>Estos son los libros disponibles:</p>
+
+<div *ngIf="loading">
+  <p>Cargando libros...</p>
+</div>
+
+<div *ngIf="!loading && books.length > 0">
+  <ul>
+    <li *ngFor="let book of books">
+      <strong>{{ book.title }}</strong> - <em>{{ book.author }}</em>
+      (ISBN: {{ book.isbn }})
+    </li>
+  </ul>
+</div>
+
+<div *ngIf="!loading && books.length === 0">
+  <p>No se encontraron libros en el sistema.</p>
+</div>
