@@ -2,5 +2,5 @@
 export const environment = {
     production: false,
     // La URL de tu API de Express en desarrollo
-    apiUrl: 'http://localhost:3000/api' 
+    apiUrl: 'https://backend-biblioteca-4pm7.onrender.com/api' 
 };
