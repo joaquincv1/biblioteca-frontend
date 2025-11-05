@@ -3,17 +3,17 @@ import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth';
 
 export const authGuard: CanActivateFn = (route, state) => {
-
-  // Inyectamos nuestros servicios (el nuevo estándar)
+  
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // Usamos el método que acabamos de crear
+  // ¡AQUÍ EL CAMBIO!
+  // Antes: authService.isLoggedIn() (llamaba a un método)
+  // Ahora: authService.isLoggedIn() (¡lee el valor del signal!)
   if (authService.isLoggedIn()) {
-    return true; // ¡Está logueado! Déjalo pasar.
+    return true; 
   } else {
-    // No está logueado. Redirigir al /login.
     router.navigate(['/login']);
-    return false; // ¡Rechaza el acceso!
+    return false;
   }
 };

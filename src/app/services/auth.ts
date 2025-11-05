@@ -1,50 +1,50 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core'; // <-- 1. Importa 'signal'
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs'; // <-- Importa 'tap'
+import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Router } from '@angular/router'; // <-- Importa el Router para el logout
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
-  private readonly TOKEN_KEY = 'auth_token'; // Clave para guardar en localStorage
+  private readonly TOKEN_KEY = 'auth_token';
 
-  constructor(private http: HttpClient) { }
+  // 2. ¡EL CAMBIO CLAVE!
+  // Creamos un signal. Lo inicializamos leyendo de localStorage
+  // para que el estado persista si refrescas la página.
+  public isLoggedIn = signal<boolean>(!!this.getToken());
+
+  constructor(private http: HttpClient, private router: Router) { } // Inyecta el Router
 
   login(credentials: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
-      // 'tap' nos permite "espiar" la respuesta sin modificarla
       tap((response: any) => {
-        // ¡Guardamos el token en localStorage!
         this.saveToken(response.token);
+        // 3. Actualizamos el signal a 'true'
+        this.isLoggedIn.set(true); 
       })
     );
   }
 
   // --- Métodos de Gestión del Token ---
-
-  // Guardar el token
   saveToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
   }
 
-  // Obtener el token
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
-  // Cerrar sesión (borrar el token)
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
-    // (Aquí también redirigiremos al login)
+    // 4. Actualizamos el signal a 'false'
+    this.isLoggedIn.set(false);
+    // Y redirigimos al login
+    this.router.navigate(['/login']);
   }
-  
-  isLoggedIn(): boolean {
-    const token = this.getToken();
-    // (Más adelante, podríamos decodificar el token para ver si ha expirado)
-    return !!token; // Devuelve 'true' si el token existe, 'false' si no
-  }
-}
-  // (Más adelante añadiremos un método 'isLoggedIn' aquí)
 
+  // 5. ¡YA NO NECESITAMOS EL MÉTODO isLoggedIn()!
+  // Lo borramos, porque ahora los guardianes leerán el signal directamente.
+}

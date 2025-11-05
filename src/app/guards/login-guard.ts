@@ -3,17 +3,15 @@ import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth';
 
 export const loginGuard: CanActivateFn = (route, state) => {
-
+  
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // ¡La lógica es al revés!
+  // ¡Igual que el otro guardián, lee el signal!
   if (authService.isLoggedIn()) {
-    // Si ESTÁ logueado, llévalo al dashboard
     router.navigate(['/dashboard']);
-    return false; // ¡Rechaza el acceso a /login!
+    return false;
   } else {
-    // No está logueado, así que SÍ puede ver el login
     return true; 
   }
 };
