@@ -1,4 +1,18 @@
-<h1>¡Bienvenido a la Biblioteca!</h1>
+<mat-toolbar color="primary">
+  <span>Gestor de Biblioteca</span>
+  
+  <span class="spacer"></span>
+  
+  <button mat-button (click)="authService.logout()">
+    Cerrar Sesión
+  </button>
+</mat-toolbar>
+
+<div class="dashboard-container">
+    
+    <h1>¡Bienvenido a la Biblioteca!</h1>
+    
+    </div>
 
 <div *ngIf="authService.userRole() === 'admin'">
   <p>Hola, Admin. Tienes acceso total.</p>
@@ -45,12 +59,36 @@
 <div *ngIf="loading">
   <p>Cargando libros...</p>
 </div>
-<ul *ngIf="!loading && books.length > 0">
-  <li *ngFor="let book of books">
-    <strong>{{ book.title }}</strong> - <em>{{ book.author }}</em>
-    (ISBN: {{ book.isbn }})
-  </li>
-</ul>
+<div class="main-content"> 
+
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Libros Disponibles</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div *ngIf="loading">
+        <p>Cargando libros...</p>
+      </div>
+
+      <mat-list *ngIf="!loading && books.length > 0">
+        <mat-list-item *ngFor="let book of books">
+          <mat-icon matListItemIcon>book</mat-icon>
+          <div matListItemTitle>
+            <strong>{{ book.title }}</strong>
+          </div>
+          <div matListItemLine>
+            Autor: {{ book.author }} | ISBN: {{ book.isbn }}
+          </div>
+        </mat-list-item>
+      </mat-list>
+
+      <div *ngIf="!loading && books.length === 0">
+        <p>No se encontraron libros en el sistema.</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
 <div *ngIf="!loading && books.length === 0">
   <p>No se encontraron libros en el sistema.</p>
 </div>

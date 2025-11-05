@@ -2,7 +2,13 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { AuthService } from '../../services/auth';
-import { Router, RouterLink } from '@angular/router'; // <-- 1. Importa RouterLink
+import { Router, RouterLink } from '@angular/router';
+
+// --- ¡Importa los módulos de Material! ---
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-login',
@@ -10,10 +16,17 @@ import { Router, RouterLink } from '@angular/router'; // <-- 1. Importa RouterLi
   imports: [
     CommonModule, 
     ReactiveFormsModule,
-    RouterLink // <-- 2. Añádelo al array de imports
+    RouterLink,
+    
+    // --- ¡Añádelos aquí! ---
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule
   ],
   templateUrl: './login.html',
-  styleUrl: './login.css'
+  // ¡Vamos a usar 'login.component.css'!
+  styleUrl: './login.css' 
 })
 export class LoginComponent {
   loginForm: FormGroup;
@@ -28,6 +41,7 @@ export class LoginComponent {
       password: ['', [Validators.required]]
     });
   }
+
 
   onSubmit() {
     if (this.loginForm.invalid) {

@@ -1,0 +1,23 @@
+/* Esto es fundamental para que los items se separen en la barra de herramientas */
+.spacer {
+  flex: 1 1 auto; 
+}
+
+/* El contenedor de la página para darle un margen de 20px */
+.dashboard-container {
+    padding: 20px;
+}
+
+/* Reglas de estilización de la tarjeta de libros */
+mat-card {
+    margin-top: 20px;
+    max-width: 800px; 
+    /* Si queremos que el contenido esté a la izquierda (como un documento) */
+    margin-left: 0; 
+}
+
+/* Arreglo visual del botón de Logout */
+/* Cambiamos mat-icon-button a mat-button para mejor visibilidad */
+.mat-toolbar button {
+    color: black; /* Asegura que el texto sea visible */
+}

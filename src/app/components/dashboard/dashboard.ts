@@ -1,16 +1,31 @@
 import { Component, OnInit } from '@angular/core';
-// 1. Importa CommonModule Y ReactiveFormsModule
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 
 import { BookService } from '../../services/book';
 import { AuthService } from '../../services/auth';
 
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+
+import { MatListModule } from '@angular/material/list'; 
+import { MatCardModule } from '@angular/material/card';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatListModule, // <-- Añade esto
+    MatCardModule
+  ],
   // 2. Añade ReactiveFormsModule a los imports
-  imports: [CommonModule, ReactiveFormsModule], 
+
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })

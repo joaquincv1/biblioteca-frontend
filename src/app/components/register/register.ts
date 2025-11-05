@@ -1,15 +1,31 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// 1. Importa todo lo de Formularios Reactivos
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router'; // <-- ¡Asegúrate de que RouterLink esté aquí!
 import { AuthService } from '../../services/auth';
+
+// --- ¡Importa los módulos de Material! ---
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select'; // <-- ¡Uno nuevo para el Rol!
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  // 2. Añade ReactiveFormsModule
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterLink, // <-- ¡Añade esto si te faltaba!
+    
+    // --- ¡Añádelos aquí! ---
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule // <-- Y este
+  ],
   templateUrl: './register.html',
   styleUrl: './register.css'
 })
