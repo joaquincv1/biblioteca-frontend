@@ -1,83 +1,89 @@
-<mat-toolbar color="primary">
-  <span>Gestor de Biblioteca</span>
-  
-  <span class="spacer"></span>
-  
-  <button mat-button (click)="authService.logout()">
-    Cerrar Sesión
-  </button>
-</mat-toolbar>
-
 <div class="dashboard-container">
+    <mat-toolbar color="primary">
+      <span>Gestor de Biblioteca</span>
+      <span class="spacer"></span> 
+      <button mat-button (click)="authService.logout()">
+        Cerrar Sesión
+      </button>
+    </mat-toolbar>
     
     <h1>¡Bienvenido a la Biblioteca!</h1>
-
+    
+    <!-- Mensaje de bienvenida según rol -->
     <div *ngIf="authService.userRole() === 'admin'">
       <p>Hola, Admin. Tienes acceso total.</p>
-      
-      <button mat-raised-button color="accent" (click)="showCreateForm = !showCreateForm">
-        {{ showCreateForm ? 'Cancelar Creación' : '+ Añadir Nuevo Libro' }}
-      </button>
-
-      <mat-list *ngIf="!loading && books.length > 0">
-  <mat-list-item *ngFor="let book of books">
-    <mat-icon matListItemIcon>book</mat-icon>
-    <div matListItemTitle>
-      <strong>{{ book.title }}</strong>
     </div>
-    <div matListItemLine>
-      Autor: {{ book.author }} | ISBN: {{ book.isbn }}
-    </div>
-
-    <div matListItemMeta *ngIf="authService.userRole() === 'admin'">
-      <button mat-icon-button color="accent" (click)="onEdit(book)" title="Editar">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button mat-icon-button color="warn" (click)="onDelete(book._id)" title="Eliminar">
-        <mat-icon>delete</mat-icon>
-      </button>
-    </div>
-  </mat-list-item>
-</mat-list>
-      
-      <hr>
-    </div>
-
     <div *ngIf="authService.userRole() === 'student'">
       <p>Hola, Estudiante. Bienvenido.</p>
     </div>
 
+    <!-- Botón y formulario de creación (solo admin) -->
+    <div *ngIf="authService.userRole() === 'admin'" class="admin-actions">
+      <button mat-raised-button color="accent" (click)="showCreateForm = !showCreateForm">
+        {{ showCreateForm ? 'Cancelar Creación' : '+ Añadir Nuevo Libro' }}
+      </button>
+      
+      <mat-card *ngIf="showCreateForm" class="mt-4 create-book-card">
+        <mat-card-title>Crear Libro</mat-card-title>
+        <mat-card-content>
+          <form [formGroup]="bookForm" (ngSubmit)="onSubmitCreateBook()">
+            <mat-form-field appearance="outline">
+              <mat-label>Título</mat-label>
+              <input matInput formControlName="title">
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Autor</mat-label>
+              <input matInput formControlName="author">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>ISBN</mat-label>
+              <input matInput formControlName="isbn">
+            </mat-form-field>
+
+            <div *ngIf="createError" class="error-general">{{ createError }}</div>
+
+            <button mat-raised-button color="primary" type="submit" [disabled]="bookForm.invalid">
+              Guardar Libro
+            </button>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Formulario de edición (solo admin) -->
+    <mat-card *ngIf="editingBook && authService.userRole() === 'admin'" class="mt-4 edit-book-card">
+      <mat-card-title>Editando: {{ editingBook.title }}</mat-card-title>
+      <mat-card-content>
+        <form [formGroup]="editForm" (ngSubmit)="onSubmitEditBook()">
+          <mat-form-field appearance="outline">
+            <mat-label>Título</mat-label>
+            <input matInput formControlName="title">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Autor</mat-label>
+            <input matInput formControlName="author">
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>ISBN</mat-label>
+            <input matInput formControlName="isbn">
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" type="submit" [disabled]="editForm.invalid">
+            Guardar Cambios
+          </button>
+          <button mat-button type="button" (click)="editingBook = null">Cancelar</button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Lista de libros (única, visible para todos) -->
     <mat-card class="mt-4">
       <mat-card-title>Libros Disponibles</mat-card-title>
       <mat-card-content>
-        
-        <div *ngIf="editingBook" class="edit-form-container mb-4">
-            <mat-card-title>Editando: {{ editingBook.title }}</mat-card-title>
-            <form [formGroup]="editForm" (ngSubmit)="onSubmitEditBook()">
-                
-                <mat-form-field appearance="outline">
-                    <mat-label>Título</mat-label>
-                    <input matInput formControlName="title">
-                </mat-form-field>
-
-                <mat-form-field appearance="outline">
-                    <mat-label>Autor</mat-label>
-                    <input matInput formControlName="author">
-                </mat-form-field>
-                
-                <mat-form-field appearance="outline">
-                    <mat-label>ISBN</mat-label>
-                    <input matInput formControlName="isbn">
-                </mat-form-field>
-
-                <button mat-raised-button color="primary" type="submit" [disabled]="editForm.invalid">
-                    Guardar Cambios
-                </button>
-                <button mat-button type="button" (click)="editingBook = null">Cancelar</button>
-            </form>
-            <hr>
-        </div>
-
         <div *ngIf="loading">
           <p>Cargando libros...</p>
         </div>
@@ -92,6 +98,7 @@
               Autor: {{ book.author }} | ISBN: {{ book.isbn }}
             </div>
 
+            <!-- Botones de acción solo para admin -->
             <div matListItemMeta *ngIf="authService.userRole() === 'admin'">
               <button mat-icon-button color="accent" (click)="onEdit(book)" title="Editar">
                 <mat-icon>edit</mat-icon>
@@ -108,5 +115,4 @@
         </div>
       </mat-card-content>
     </mat-card>
-
 </div>

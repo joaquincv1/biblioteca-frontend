@@ -1,5 +1,5 @@
 .spacer {
-  flex: 1 1 auto; /* Esto empuja el botón de logout a la derecha */
+  flex: 1 1 auto; /* <-- ¡Esta regla hace la magia de empuje! */
 }
 
 .dashboard-container {
@@ -24,7 +24,7 @@ button[mat-raised-button], button[mat-button] {
 
 /* La tarjeta del dashboard no debe ser demasiado ancha */
 mat-card {
-    max-width: 800px;
+    max-width: 600px;
 }
 
 /* Estilizado del formulario de edición para distinguirlo */
@@ -33,4 +33,21 @@ mat-card {
     border: 1px solid #ccc;
     border-radius: 4px;
     margin-bottom: 20px;
+}
+
+.create-book-card {
+    /* Le da un ancho máximo para que no se extienda por toda la pantalla */
+    max-width: 450px; 
+    /* Centra la tarjeta si el contenedor principal lo permite */
+    margin-left: auto;
+    margin-right: auto;
+    /* Asegura que el botón "Cancelar Creación" no quede pegado al título */
+    margin-bottom: 20px; 
+}
+
+/* * Ajuste visual de los campos de formulario: 
+ * Aseguramos que los campos de Material ocupen el 100% de la TARJETA.
+ */
+.create-book-card mat-form-field {
+    width: 100%;
 }
