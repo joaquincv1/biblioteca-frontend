@@ -1,0 +1,65 @@
+<div class="loans-container">
+    <h1>Mi Historial de Préstamos</h1>
+
+    <div *ngIf="loading" class="spinner-container">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Cargando historial...</p>
+    </div>
+
+    <mat-card *ngIf="!loading">
+        <mat-card-content>
+            
+            <table mat-table [dataSource]="loans" class="full-width-table">
+                
+                <ng-container matColumnDef="title">
+                    <th mat-header-cell *matHeaderCellDef> Título </th>
+                    <td mat-cell *matCellDef="let loan"> {{ loan.book.title }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="author">
+                    <th mat-header-cell *matHeaderCellDef> Autor </th>
+                    <td mat-cell *matCellDef="let loan"> {{ loan.book.author }} </td>
+                </ng-container>
+                
+                <ng-container matColumnDef="loanDate">
+                    <th mat-header-cell *matHeaderCellDef> Prestado </th>
+                    <td mat-cell *matCellDef="let loan"> {{ loan.createdAt | date:'shortDate' }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="dueDate">
+                    <th mat-header-cell *matHeaderCellDef> Límite Devolución </th>
+                    <td mat-cell *matCellDef="let loan"> {{ loan.dueDate | date:'shortDate' }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef> Estado </th>
+                    <td mat-cell *matCellDef="let loan"> 
+                        <span [class.returned]="loan.returned" [class.pending]="!loan.returned">
+                            {{ loan.returned ? 'DEVUELTO' : 'PENDIENTE' }}
+                        </span>
+                    </td>
+                </ng-container>
+                
+                <ng-container matColumnDef="action">
+                    <th mat-header-cell *matHeaderCellDef> Acción </th>
+                    <td mat-cell *matCellDef="let loan"> 
+                        <button 
+                            *ngIf="!loan.returned" 
+                            mat-raised-button 
+                            color="warn" 
+                            (click)="onReturn(loan._id, loan.book.title)">
+                            Marcar Devolución
+                        </button>
+                        <span *ngIf="loan.returned">Completado</span>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+
+            <p *ngIf="loans.length === 0 && !loading">No tienes préstamos registrados en el sistema.</p>
+
+        </mat-card-content>
+    </mat-card>
+</div>

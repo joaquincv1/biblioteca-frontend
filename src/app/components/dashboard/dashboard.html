@@ -1,7 +1,16 @@
 <div class="dashboard-container">
     <mat-toolbar color="primary">
-      <span>Gestor de Biblioteca</span>
+      <button mat-button (click)="goToDashboard()" class="home-button">
+    Gestor de Biblioteca
+  </button>
       <span class="spacer"></span> 
+      <button 
+        mat-button 
+        (click)="goToMyLoans()"
+        class="mr-4"
+        title="Ver mi historial de préstamos">
+        Mis Préstamos
+      </button>
       <button mat-button (click)="authService.logout()">
         Cerrar Sesión
       </button>
@@ -98,14 +107,23 @@
               Autor: {{ book.author }} | ISBN: {{ book.isbn }}
             </div>
 
-            <!-- Botones de acción solo para admin -->
-            <div matListItemMeta *ngIf="authService.userRole() === 'admin'">
-              <button mat-icon-button color="accent" (click)="onEdit(book)" title="Editar">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button mat-icon-button color="warn" (click)="onDelete(book._id)" title="Eliminar">
-                <mat-icon>delete</mat-icon>
-              </button>
+            <!-- Botones de acción según rol -->
+            <div matListItemMeta>
+              <ng-container *ngIf="authService.userRole() === 'admin'">
+                <button mat-icon-button color="accent" (click)="onEdit(book)" title="Editar">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="onDelete(book._id)" title="Eliminar">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </ng-container>
+              <ng-container *ngIf="authService.userRole() === 'student'">
+                <button mat-raised-button color="primary" 
+                        (click)="onLoanRequest(book._id, book.title)" 
+                        title="Solicitar Préstamo">
+                  Pedir
+                </button>
+              </ng-container>
             </div>
           </mat-list-item>
         </mat-list>
@@ -115,4 +133,5 @@
         </div>
       </mat-card-content>
     </mat-card>
+    
 </div>

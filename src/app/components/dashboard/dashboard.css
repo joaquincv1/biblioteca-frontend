@@ -51,3 +51,7 @@ mat-card {
 .create-book-card mat-form-field {
     width: 100%;
 }
+.home-button {
+    font-size: 1.25rem; /* Un poco más grande */
+    font-weight: 500;   /* Negrita media */
+}

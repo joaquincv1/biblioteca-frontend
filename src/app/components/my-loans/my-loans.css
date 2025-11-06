@@ -1,0 +1,39 @@
+.loans-container {
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+/* Estilo para la tabla de Material */
+.full-width-table {
+    width: 100%;
+}
+
+/* Estilos de estado */
+.returned {
+    font-weight: bold;
+    color: green;
+}
+
+.pending {
+    font-weight: bold;
+    color: #d32f2f; /* Rojo de error/advertencia */
+}
+
+/* Estilo para el spinner de carga */
+.spinner-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 150px;
+}
+
+/* Separa la tarjeta de la lista del título */
+mat-card {
+    margin-top: 20px;
+}
