@@ -93,3 +93,20 @@
             </div>
 
             <div matListItemMeta *ngIf="authService.userRole() === 'admin'">
+              <button mat-icon-button color="accent" (click)="onEdit(book)" title="Editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="onDelete(book._id)" title="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </mat-list-item>
+        </mat-list>
+
+        <div *ngIf="!loading && books.length === 0">
+          <p>No se encontraron libros en el sistema.</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+</div>
