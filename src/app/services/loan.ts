@@ -1,18 +1,20 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoanService {
-  private apiUrl = 'http://localhost:3000/api/loans'; // Ajusta según tu backend
+  private apiUrl = `${environment.apiUrl}/loans`; // Ajusta según tu backend
 
   constructor(private http: HttpClient) { }
 
   // Obtener los préstamos del usuario actual
   getMyLoans(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/my-loans`);
+    // Si tu ruta en el backend es '/my', asegúrate de que el frontend la use
+    return this.http.get<any[]>(`${this.apiUrl}/my`); // <--- ¡Asegúrate de que sea /my !
   }
 
   // Crear una solicitud de préstamo
